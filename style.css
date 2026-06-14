@@ -112,3 +112,8 @@
 .delete-icon {
   padding: 15px;
 }
+
+.checked {
+  text-decoration: line-through;
+  color: #a9a9a9;
+}
