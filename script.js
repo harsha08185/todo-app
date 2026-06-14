@@ -1,22 +1,35 @@
 console.log("Script Loaded Successfully");
 
-let todoList = [
-    {
-        text: "Learn HTML",
-        uniqueID:1,
-        isChecked: false
-    },
-    {
-        text: "Learn CSS",
-        uniqueID:2,
-        isChecked: false
-    },
-    {
-        text: "Learn JavaScript",
-        uniqueID:3,
-        isChecked: false
+
+let getTodoListFromLocalStorage = () =>{
+    let stringifiedTodoList = localStorage.getItem('todoList');
+    let parsedTodoList = JSON.parse(stringifiedTodoList);
+
+    if (parsedTodoList === null) {
+        return [];
     }
-]
+    return parsedTodoList;
+}
+
+let todoList = getTodoListFromLocalStorage();
+
+// let todoList = [
+//     {
+//         text: "Learn HTML",
+//         uniqueID:1,
+//         isChecked: false
+//     },
+//     {
+//         text: "Learn CSS",
+//         uniqueID:2,
+//         isChecked: false
+//     },
+//     {
+//         text: "Learn JavaScript",
+//         uniqueID:3,
+//         isChecked: false
+//     }
+// ]
 
 
 onStatusChange = (checkboxId, labelId) => {
@@ -26,9 +39,18 @@ onStatusChange = (checkboxId, labelId) => {
     labelElement.classList.toggle("checked");
 }
 
-onDeleteTodo = (deleteIconContainerId, todoElementId) => {
+onDeleteTodo = (todoID,todoElementId) => {
     let todoItemElement = document.getElementById(todoElementId);
-    todoItemElement.remove();
+        todoItemElement.remove();
+
+
+    let deleteIndex = todoList.findIndex( (eachTodo)=>{
+        return eachTodo.uniqueID === todoID;
+    });
+
+
+    todoList.splice(deleteIndex, 1);
+    localStorage.setItem('todoList', JSON.stringify(todoList));
  }
 
 function createAndAppendTodo(todo) {
@@ -68,7 +90,7 @@ let deleteIconContainer = document.createElement('div');
     deleteIconContainer.id = `deleteIconContainer${todo.uniqueID}`;
 
     deleteIconContainer.addEventListener('click', function() {
-        onDeleteTodo(deleteIconContainer.id, todoElement.id);
+        onDeleteTodo(todo.uniqueID,todoElement.id);
     });
     labelContainer.appendChild(deleteIconContainer);
 
@@ -103,4 +125,13 @@ onAddButton.addEventListener('click', () =>{
     todoList.push(newTodo);
     createAndAppendTodo(newTodo);
     userInputElement.value = "";
+
+    localStorage.setItem('todoList',JSON.stringify(todoList));
+})
+
+let onSaveButton = document.getElementById("saveButton");
+
+onSaveButton.addEventListener('click', () => {
+    localStorage.setItem('todoList',JSON.stringify(todoList));
+    alert("Todo List Saved Successfully!");
 })
