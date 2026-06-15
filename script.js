@@ -32,11 +32,19 @@ let todoList = getTodoListFromLocalStorage();
 // ]
 
 
-onStatusChange = (checkboxId, labelId) => {
+onStatusChange = (checkboxId, labelId, todoID) => {
     let checkboxElement = document.getElementById(checkboxId);
     let labelElement = document.getElementById(labelId);
 
     labelElement.classList.toggle("checked");
+
+    let todoIndex = todoList.findIndex((eachTodo)=>{
+        return eachTodo.uniqueID === todoID;
+    });
+
+    todoList[todoIndex].isChecked = !todoList[todoIndex].isChecked;
+
+    localStorage.setItem('todoList',JSON.stringify(todoList));
 }
 
 onDeleteTodo = (todoID,todoElementId) => {
@@ -70,7 +78,7 @@ let inputElement = document.createElement("input");
     inputElement.classList.add("checkbox-input");
 
     inputElement.addEventListener('click', function() {
-        onStatusChange(inputElement.id, labelElement.id);
+        onStatusChange(inputElement.id, labelElement.id,todo.uniqueID);
     });
     todoElement.appendChild(inputElement);
 
@@ -85,6 +93,12 @@ let labelElement = document.createElement("label");
     labelElement.classList.add("checkbox-label");
     labelContainer.appendChild(labelElement);
 
+    if(todo.isChecked) {
+        labelElement.classList.add("checked");
+    } else {
+        labelElement.classList.remove("checked");
+    }
+    
 let deleteIconContainer = document.createElement('div');
     deleteIconContainer.classList.add("delete-icon-container");
     deleteIconContainer.id = `deleteIconContainer${todo.uniqueID}`;
@@ -99,7 +113,6 @@ let deleteIconElement = document.createElement('i');
     deleteIconContainer.appendChild(deleteIconElement);
 
 }
-
 
 for(let todo of todoList) {
     createAndAppendTodo(todo);
